@@ -91,7 +91,7 @@ class Progress:
             # cpu = "{psutil.cpu_percent()}%"
             tmp = (
                 progress
-                + "\n**⌧ Total 🗃:**` 〚{1}〛`\n**⌧ Done ✅ :**` 〚{0}〛`\n**⌧ Speed 📊 :** ` 〚{2}/s〛`\n**⌧ ETA 🔃 :**` 〚{3}〛`\n {4}".format(
+                + "\n**🗃️ SIZE :**` 〚{1}〛`\n**⏳️ DONE :**` 〚{0}〛`\n**🚀 SPEED :** ` 〚{2}/s〛`\n**⏰️ ETA :**` 〚{3}〛`\n {4}".format(
                     humanbytes(current),
                     humanbytes(total),
                     humanbytes(speed),
