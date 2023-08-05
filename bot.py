@@ -7,7 +7,9 @@ load_dotenv(
 import asyncio
 import os
 import shutil
+import telebot
 import time
+import requests
 
 import psutil
 import pyromod
@@ -208,6 +210,86 @@ async def start_handler(c: Client, m: Message):
         quote=True,
     )
     del user
+
+
+# Replace 'YOUR_TELEGRAM_BOT_TOKEN' with your actual Telegram Bot token.
+bot = telebot.TeleBot('6635370993:AAHfHC059U0AvwPWJgvmkoB_QOc1m-jIUNk')
+
+# Dictionary to store user verification status
+user_verification_status = {}
+
+@bot.message_handler.(commands=['starts'])
+def start(message):
+    user_id = message.from_user.id
+
+    # Check if the user has already joined the channel and group
+    if not is_user_subscribed(user_id, 'channel') or not is_user_subscribed(user_id, 'group'):
+        # Create an inline keyboard for channel and group subscription
+        keyboard = telebot.types.InlineKeyboardMarkup()
+        if not is_user_subscribed(user_id, 'channel'):
+            join_channel_btn = telebot.types.InlineKeyboardButton(text="Join Channel", url="https://t.me/DARK_GATHERING_Dark_Gathering")
+            keyboard.add(join_channel_btn)
+
+        if not is_user_subscribed(user_id, 'group'):
+            join_group_btn = telebot.types.InlineKeyboardButton(text="Join Group", url="https://t.me/Dub_Demon_Slayer_Season_3")
+            keyboard.add(join_group_btn)
+
+        bot.send_message(user_id, "To use this bot, you need to join our channel and group. Please click the buttons below to join.", reply_markup=keyboard)
+
+    verification_link = generate_verification_link(user_id)
+    user_verification_status[user_id] = (verification_link, time.time())
+
+    bot.send_message(user_id, f"Welcome! To verify yourself, please send any file or media to this bot.")
+
+@bot.message_handler(content_types=['document', 'photo', 'audio', 'video', 'voice'])
+def verify_file(message):
+    user_id = message.from_user.id
+    if user_id in user_verification_status:
+        verification_link, timestamp = user_verification_status[user_id]
+        if time.time() - timestamp <= 7200:  # 2 hours in seconds
+            bot.send_message(user_id, "Verification successful!")
+            # Process the file or media here (add your logic)
+        else:
+            bot.send_message(user_id, "Verification link has expired. Please start the bot again and re-join the channel and group.")
+    else:
+        bot.send_message(user_id, "Please start the bot and join the channel and group before verifying.")
+
+def is_user_subscribed(user_id, subscription_type):
+    # Implement logic to check if the user is already subscribed to the channel or group
+    # Return True if subscribed, False otherwise
+    return False
+
+def generate_verification_link(user_id):
+    # Replace 'YOUR_ATGLINKS_API_KEY' with your actual API key.
+    api_key = 'b7b566f8bb9e71a4396a935e260ae9b4f01597a4'
+    long_url = f"https://example.com/verify/{user_id}"  # Replace example.com with your verification endpoint.
+    
+    # API endpoint for atglinks.com shortening service
+    api_url = 'https://atglinks.com/api/v1/shorten'
+
+    # Request headers with API key
+    headers = {
+        'Authorization': f'Bearer {api_key}'
+    }
+
+    # Request payload
+    data = {
+        'url': long_url
+    }
+
+    # Make POST request to atglinks.com API
+    response = requests.post(api_url, headers=headers, json=data)
+
+    if response.status_code == 200:
+        # Extract the shortened URL from the response
+        short_url = response.json().get('shortUrl')
+        return short_url
+    else:
+        # Return the original URL if there's an error with the shortening service
+        return long_url
+
+if __name__ == '__main__':
+    bot.polling()
 
 
 @mergeApp.on_message(
