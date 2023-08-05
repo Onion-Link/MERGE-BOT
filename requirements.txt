@@ -9,4 +9,3 @@ pyromod
 python-dotenv
 requests
 TgCrypto
-telebot
