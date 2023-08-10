@@ -103,7 +103,7 @@ async def MergeSub(filePath: str, subPath: str, user_id):
     muxcmd.append("copy")
     muxcmd.append("-c:s")
     muxcmd.append("srt")
-    muxcmd.append(f"./downloads/{str(user_id)}/[@yashoswalyo]_softmuxed_video.mkv")
+    muxcmd.append(f"./downloads/{str(user_id)}/[@AnimeDownloaderChat_Bot]_softmuxed_video.mkv")
     LOGGER.info("Muxing subtitles")
     subprocess.call(muxcmd)
     orgFilePath = shutil.move(
@@ -187,7 +187,7 @@ def MergeAudio(videoPath: str, files_list: list, user_id):
         muxcmd.append("-map")
         muxcmd.append(f"{j}:a")
         muxcmd.append(f"-metadata:s:a:{audioTracks}")
-        muxcmd.append(f"title=Track {audioTracks+1} - tg@AnimeDownloaderChat_Bot")
+        muxcmd.append(f"title=Track {audioTracks+1} - TG-@AnimeDownloaderChat_Bot")
         audioTracks += 1
     muxcmd.append(f"-disposition:s:a:{fAudio}")
     muxcmd.append("default")
